@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Slime Chargers!</title>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js"></script>
+<script src="lib/pixi-particles.min.js"></script>
+<script src="lib/pixi-sound.min.js"></script>
+<style>
+	.message {
+		font-size: 4rem;
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		top: 10%;
+		z-index: 1;
+		color: white;
+		text-shadow: 2px 2px 4px #000000;
+	}
+
+	.gold {
+		position: absolute;
+		left: 0;
+		top: 2%;
+		-webkit-border-radius: 0 25px 25px 0;
+		-moz-border-radius: 0 25px 25px 0;
+		border-radius: 0 25px 25px 0;
+		background: #000a url(assets/coin.png) no-repeat left center;
+		background-size: contain;
+		color: #fff;
+		height: 3rem;
+		width: auto;
+		z-index: 1;
+		padding: 10px;
+		padding-left: calc( 10px + 5rem);
+		font-size: 2rem;
+		vertical-align: middle;
+	}
+
+	.charge {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		width: 90%;
+		height: 20px;
+		padding: 5px;
+		background: #000a;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		position: absolute;
+		z-index: 1;
+		left: 5%;
+		bottom: 5%;
+	}
+
+	.charge p {
+		position: absolute;
+		top: calc( 5% - 48px );
+		padding: 5px;
+		color: #fff;
+		background: #000a;
+		-webkit-border-radius: 5px 5px 0 0;
+		-moz-border-radius: 5px 5px 0 0;
+		border-radius: 5px 5px 0 0;
+	}
+
+	.bar {
+		background: #ff6;
+		width: 0;
+		height: 10px;
+		max-width: 100%;
+	}
+
+	.start {
+		position: absolute;
+		z-index: 1;
+		bottom: 2%;
+		width: 80%;
+		left: 10%;
+		text-align: center;
+		color: #fff;
+		font-size: 1.5rem;
+		background: #000a;
+		-webkit-border-radius: 25px;
+		-moz-border-radius: 25px;
+		border-radius: 25px;
+	}
+
+	.shop {
+		position: absolute;
+		top: 10%;
+		left: 10%;
+		width: 80%;
+		height: 70%;
+		padding: 5px;
+		color: #fff;
+		background: #000a;
+		-webkit-border-radius: 25px;
+		-moz-border-radius: 25px;
+		border-radius: 25px;
+		z-index: 1
+	}
+
+	.shop-title {
+		font-size: 2rem;
+		text-align: center;
+		width: 100%;
+		margin: 10px;
+	}
+
+	.shop-scroll {
+		overflow-y: auto;
+		width: calc( 100% - 44px );
+		height: calc( 100% - 62px - 2rem );
+		border: 2px solid #000;
+		-webkit-border-radius: 25px;
+		-moz-border-radius: 25px;
+		border-radius: 25px;
+		margin: 10px;
+		padding: 10px;
+	}
+
+	.shop-item {
+		background: #000a;
+	    -webkit-border-radius: 25px;
+	    -moz-border-radius: 25px;
+	    border-radius: 25px;
+	    padding: 10px;
+	    margin-bottom: 10px;
+	}
+
+	.shop-item-title {
+		margin: 10px;
+	    font-size: 2rem;
+	    display: inline-block;
+	}
+
+	.shop-item-buy {
+		display: inline-block;
+	    float: right;
+	    margin: 10px;
+	    background: url(assets/coin.png) no-repeat left center;
+	    background-size: contain;
+	    padding: 10px;
+	    padding-left: calc( 10px + 3rem);
+	    font-size: 1.5rem;
+	}
+
+	.shop-item-desc {
+		margin: 10px;
+	}
+</style>
+<body style="margin: 0; background-color: #FFF;">
+	<div class="message" id="greeting">
+		<p>Slime Chargers!</p>
+	</div>
+	<div class="message" id="finish" style="display: none;">
+		<p>Congratulations, you've charged all the crystals!</p>
+	</div>
+	<div class="gold" id="gold">
+	0
+	</div>
+	<div class="shop" id="shop" style="display: none;">
+		<p class="shop-title">Shop</p>
+		<div class="shop-scroll">
+			<div class="shop-item">
+				<p class="shop-item-title">Slime seeds</p>
+				<div class="shop-item-buy" id="spm">1000</div>
+				<p class="shop-item-desc">A bag of slime seeds. This'll cause more slimes to appear.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Accelerates Slime Growth</p>
+				<div class="shop-item-buy" id="ssd">1000</div>
+				<p class="shop-item-desc">By changing the diet of the slimes you can make baby slimes grow up faster.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Slime Turbines</p>
+				<div class="shop-item-buy" id="eps">1000</div>
+				<p class="shop-item-desc">By integrating turbines inside of slimes, you can increase the rate at which each slime charges the crystals.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Slime Fertility</p>
+				<div class="shop-item-buy" id="is">1000</div>
+				<p class="shop-item-desc">Slimes are naturally slow to mate, leaving very few left over wave to wave. More fecund slimes allow for more slimes already at your crystal at the start of the wave.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Slippery Slime</p>
+				<div class="shop-item-buy" id="sd">1000</div>
+				<p class="shop-item-desc">Increasing how slippery the slimes are allow them to move across the stage more quickly.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Hard Hats</p>
+				<div class="shop-item-buy" id="sa">1000</div>
+				<p class="shop-item-desc">Hard hats can protect slimes from impacts.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Focused Spawning</p>
+				<div class="shop-item-buy" id="fs">1000</div>
+				<p class="shop-item-desc">The seeds were planted more precisely, so that slimes spawn more closely to the crystal.</p>
+			</div>
+			<div class="shop-item">
+				<p class="shop-item-title">Rocks</p>
+				<div class="shop-item-buy" id="fw">1000</div>
+				<p class="shop-item-desc">Adding rocks to the fortress makes it heavier, which makes it fall more forcefully.</p>
+			</div>
+		</div>
+	</div>
+	<div class="charge" id="charge" style="display: none;">
+		<p>Charging crystals...</p>
+		<div class="bar" id="energy">
+		</div>
+	</div>
+	<div class="start" id="start">
+		<p id="grats" style="display: none;">Congratulations, you charged the crystals!</p>
+		<p id="next-wave">Press to start wave</p>
+	</div>
+	<script src="js/index.js"></script>
+</body>
+</html>
